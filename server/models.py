@@ -10,4 +10,4 @@ class Book(Base):
     title = Column(String, index=True, nullable=False)
     author = Column(String, index=True, nullable=False)
     genre = Column(String, default="")
-    status = Column(String, default="В планах")
+    status = Column(String, default="В планах") #Варианты: "прочитано", "в процессе", "в планах"
