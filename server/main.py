@@ -45,6 +45,15 @@ def get_books(db: Session = Depends(get_db)):
     books = db.query(models.Book).all()
     return books
 
+@app.get("/books/{book_id}", response_model=BookRespone)
+def get_book(book_id: int, db: Session = Depends(get_db)):
+    book = db.query(models.Book). filter(models.Book.id == book_id).first()
+    if not book:
+        raise HTTPException(status_code=404, detail="Book not found, sorry :)")
+    
+    return book
+
+
 @app.delete("/books/{book_id}")
 def delete_book(book_id: int, db: Session = Depends(get_db)):
     book = db.query(models.Book). filter(models.Book.id == book_id).first()
