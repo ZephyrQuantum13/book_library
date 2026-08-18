@@ -16,7 +16,7 @@ class BookCreate(BaseModel):
     genre: Optional[str] = ""
     status: Optional[str] = "В планах"
 
-Class BookRespone(BaseModel):
+class BookRespone(BaseModel):
     id: int
     title: str
     author: str
@@ -40,11 +40,22 @@ def add_book(book: BookCreate, db: Session = Depends(get_db)):
         status=book.status,
     )
 
-app.get("/books", response_model=list[BookRespone])
+@app.get("/books", response_model=list[BookRespone])
 def get_books(db: Session = Depends(get_db)):
     books = db.query(models.Book).all()
     return books
-    
+
+@app.delete("/books/{book_id}")
+def delete_book(book_id: int, db: Session = Depends(get_db)):
+    book = db.query(models.Book). filter(models.Book.id == book_id).first()
+    if not book:
+        raise HTTPException(status_code=404, detail="Book not found, sorry :)")
+
+    db.delete(book)
+    db.commit()
+    return {"message": "Book deleted successfully"}
+
+
 
     db.add(db_book)
     db.commit()
