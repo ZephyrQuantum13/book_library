@@ -16,6 +16,13 @@ class BookCreate(BaseModel):
     genre: Optional[str] = ""
     status: Optional[str] = "В планах"
 
+Class BookRespone(BaseModel):
+    id: int
+    title: str
+    author: str
+    genre: str
+    status: str
+
 def get_db():
     db = SessionLocal()
     try:
@@ -33,8 +40,14 @@ def add_book(book: BookCreate, db: Session = Depends(get_db)):
         status=book.status,
     )
 
+app.get("/books", response_model=list[BookRespone])
+def get_books(db: Session = Depends(get_db)):
+    books = db.query(models.Book).all()
+    return books
+    
+
     db.add(db_book)
-    dp.commit()
+    db.commit()
     db.refresh(db_book)
     return db_book
    
