@@ -40,6 +40,11 @@ def add_book(book: BookCreate, db: Session = Depends(get_db)):
         status=book.status,
     )
 
+    db.add(db_book)
+    db.commit()
+    db.refresh(db_book)
+    return db_book
+
 @app.get("/books", response_model=list[BookRespone])
 def get_books(db: Session = Depends(get_db)):
     books = db.query(models.Book).all()
@@ -64,12 +69,19 @@ def delete_book(book_id: int, db: Session = Depends(get_db)):
     db.commit()
     return {"message": "Book deleted successfully"}
 
+@app.put("/books/{book_id}")
+def update_book(book_id: int, book: BookCreate, db: Session = Depends(get_db)):
+    db_book = db.query(models.Book). filter(models.Book.id == book_id).first()
+    if not db_book:
+        raise HTTPException(status_code=404, detail="Book not found, sorry :)")
 
-
-    db.add(db_book)
+    update_data = book_update.model_dump(exclude_unset=True)
+    for field, value in update_data.items():
+        setattr(book, field, value)
     db.commit()
-    db.refresh(db_book)
-    return db_book
+    db.refresh(book)
+    return book
+
    
 
 
