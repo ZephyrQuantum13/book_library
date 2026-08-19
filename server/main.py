@@ -75,12 +75,12 @@ def update_book(book_id: int, book: BookCreate, db: Session = Depends(get_db)):
     if not db_book:
         raise HTTPException(status_code=404, detail="Book not found, sorry :)")
 
-    update_data = book_update.model_dump(exclude_unset=True)
+    update_data = book.model_dump(exclude_unset=True)
     for field, value in update_data.items():
-        setattr(book, field, value)
+        setattr(db_book, field, value)
     db.commit()
-    db.refresh(book)
-    return book
+    db.refresh(db_book)
+    return db_book
 
    
 

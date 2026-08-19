@@ -3,3 +3,4 @@ books.db
 /client/__pycache__
 /client/ui/__pycache__
 /server/__pycache__
+.env
